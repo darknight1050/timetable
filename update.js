@@ -1,3 +1,6 @@
+if(typeof fetch !== 'function')
+  fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+
 const { exit } = require("process");
 
 const args = process.argv.splice(2);
