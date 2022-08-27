@@ -2,11 +2,14 @@ import * as React from "react";
 import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import LinearProgress from "@mui/material/LinearProgress";
-import { ViewState } from "@devexpress/dx-react-scheduler";
-import { Scheduler, WeekView, DayView, Appointments, Toolbar, DateNavigator, ViewSwitcher, Resources, AppointmentTooltip, TodayButton, CurrentTimeIndicator } from "@devexpress/dx-react-scheduler-material-ui";
+import Grid from '@mui/material/Grid';
+import Room from '@mui/icons-material/Room';
+import SchoolIcon from '@mui/icons-material/School';
+import { ViewState, AppointmentModel, Resource} from "@devexpress/dx-react-scheduler";
+import { Scheduler, DayView, WeekView, MonthView, Appointments, Toolbar, DateNavigator, ViewSwitcher, Resources, AppointmentTooltip, TodayButton, CurrentTimeIndicator } from "@devexpress/dx-react-scheduler-material-ui";
 import classNames from "clsx";
 
-const PREFIX = "Demo";
+const PREFIX = "timetable";
 
 const classes = {
   toolbarRoot: `${PREFIX}-toolbarRoot`,
@@ -14,7 +17,14 @@ const classes = {
   line: `${PREFIX}-line`,
   circle: `${PREFIX}-circle`,
   nowIndicator: `${PREFIX}-nowIndicator`,
+  text: `${PREFIX}-text`,
+  title: `${PREFIX}-title`,
+  content: `${PREFIX}-content`,
+  container: `${PREFIX}-container`,
+  icon: `${PREFIX}-icon`,
+  textCenter: `${PREFIX}-textCenter`,
 };
+
 // @ts-ignore
 const StyledDiv = styled("div", { shouldForwardProp: (prop) => prop !== "top" })(({ theme, top }) => ({
   [`&.${classes.toolbarRoot}`]: {
@@ -50,35 +60,63 @@ const StyledLinearProgress = styled(LinearProgress)(() => ({
   },
 }));
 
-const ToolbarWithLoading = // @ts-ignore
-  ({ children, ...restProps }) => (
-    <StyledDiv className={classes.toolbarRoot}>
-      <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
-      <StyledLinearProgress className={classes.progress} />
-    </StyledDiv>
-  );
-
-const initialState = {
-  data: [],
-  loading: false,
-  currentViewName: "Tag",
-};
-
-// @ts-ignore
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "setLoading":
-      return { ...state, loading: action.payload };
-    case "setData":
-      return { ...state, data: action.payload };
-    case "setResources":
-      return { ...state, resources: action.payload };
-    case "setCurrentViewName":
-      return { ...state, currentViewName: action.payload };
-    default:
-      return state;
+const StyledAppointmentsAppointmentContent = styled(Appointments.AppointmentContent)(({theme}) => ({
+  [`& .${classes.text}`]: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    color: "black"
+  },
+  [`& .${classes.title}`]: {
+    "font-weight": "bold"
+  },
+  [`& .${classes.content}`]: {
+    opacity: 0.8
+  },
+  [`& .${classes.container}`]: {
+    width: "100%",
+    lineHeight: 1.2,
+    height: "100%"
   }
-};
+}));
+
+const StyledAppointmentTooltipContent = styled(AppointmentTooltip.Content)(({theme}) => ({
+  [`& .${classes.text}`]: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap",
+    color: "black"
+  },
+  [`& .${classes.title}`]: {
+    "font-weight": "bold"
+  },
+  [`& .${classes.content}`]: {
+    opacity: 0.8
+  },
+  [`& .${classes.container}`]: {
+    width: "100%",
+    lineHeight: 1.2,
+    height: "100%"
+  }
+}));
+
+const StyledGrid = styled(Grid)(() => ({
+  [`&.${classes.textCenter}`]: {
+    textAlign: 'center',
+  },
+}));
+
+const StyledRoom = styled(Room)(({ theme }) => ({
+  [`&.${classes.icon}`]: {
+    color: theme.palette.action.active,
+  },
+}));
+
+const StyledSchoolIcon = styled(SchoolIcon)(({ theme }) => ({
+  [`&.${classes.icon}`]: {
+    color: theme.palette.action.active,
+  },
+}));
 
 // @ts-ignore
 const getData = (setData, setLoading) => {
@@ -104,37 +142,106 @@ const getResources = (setResources, setLoading) => {
     });
 };
 
-const TimeIndicator = ({
-  // @ts-ignore
-  top,
-  ...restProps
-}) => (
+// @ts-ignore
+const ToolbarWithLoading = ({ children, ...restProps }: Toolbar.RootProps) => (
+  <StyledDiv className={classes.toolbarRoot}>
+    <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
+    <StyledLinearProgress className={classes.progress} />
+  </StyledDiv>
+);
+
+const TimeIndicator = ({ top, ...restProps }: CurrentTimeIndicator.IndicatorProps) => (
   // @ts-ignore
   <StyledDiv top={top} {...restProps}>
-    {/*
- // @ts-ignore */}
     <div className={classNames(classes.nowIndicator, classes.circle)} />
-    {/*
-     // @ts-ignore */}
     <div className={classNames(classes.nowIndicator, classes.line)} />
   </StyledDiv>
 );
 
+const AppointmentContent = ({ data, ...restProps }: Appointments.AppointmentContentProps) => (
+  <StyledAppointmentsAppointmentContent {...restProps} data={data}>
+    <div className={classes.container}>
+      <div className={classNames(classes.text, classes.title)}> {data.title} </div>
+      <div className={classNames(classes.text, classes.content)}> {data.room} </div>
+      <div className={classNames(classes.text, classes.content)}> {data.teacher} </div>
+    </div>
+  </StyledAppointmentsAppointmentContent>
+);
+
+const AppointmentTooltipContent = (({ appointmentData, ...restProps }: AppointmentTooltip.ContentProps) => (
+    // @ts-ignore
+  <StyledAppointmentTooltipContent {...restProps} appointmentData={appointmentData}>
+  {console.log(restProps)}
+    <Grid container alignItems="center">
+      <StyledGrid item xs={2} className={classes.textCenter}>
+        <StyledRoom className={classes.icon} />
+      </StyledGrid>
+      <Grid item xs={10}>
+        <span>{appointmentData?.room}</span>
+      </Grid>
+    </Grid>
+    {appointmentData?.teacher &&
+      <Grid container alignItems="center">
+        <StyledGrid item xs={2} className={classes.textCenter}>
+          <StyledSchoolIcon className={classes.icon} />
+        </StyledGrid>
+        <Grid item xs={10}>
+          <span>{appointmentData?.teacher}</span>
+        </Grid>
+      </Grid>
+    }
+  </StyledAppointmentTooltipContent>
+));
+
+type State = { 
+  data: Array<AppointmentModel>; 
+  resources: Array<Resource>; 
+  loading: boolean; 
+} 
+type Action =
+ | { type: 'setLoading', payload: boolean }
+ | { type: 'setData', payload: Array<AppointmentModel> }
+ | { type: 'setResources', payload: Array<Resource> };
+
+const initialState: State = {
+  data: [],
+  resources: [],
+  loading: false,
+};
+const appointments: Array<AppointmentModel> = [{
+  startDate: '2018-10-31T10:00',
+  endDate: '2018-10-31T11:15',
+  title: 'Meeting',
+  type: 'private',
+}, {
+  startDate: '2018-10-31T07:30',
+  endDate: '2018-10-31T09:00',
+  title: 'Go to a gym',
+  type: 'work',
+}];
+
+const reducer = (state: State, action: Action): State  => {
+  switch (action.type) {
+    case "setLoading":
+      return { ...state, loading: action.payload };
+    case "setData":
+      return { ...state, data: action.payload };
+    case "setResources":
+      return { ...state, resources: action.payload };
+    default:
+      return state;
+  }
+};
+
 export default () => {
-  const [state, dispatch] = React.useReducer(reducer, initialState);
-  const { data, resources, loading, currentViewName, mainResourceName = "subject", locale = "de-CH" } = state;
-  const setCurrentViewName = React.useCallback(
-    // @ts-ignore
-    (nextViewName) =>
-      dispatch({
-        type: "setCurrentViewName",
-        payload: nextViewName,
-      }),
-    [dispatch]
-  );
+  const [{
+    data,
+    resources,
+    loading,
+    }, dispatch] = React.useReducer(reducer, initialState);
+
   const setData = React.useCallback(
-    // @ts-ignore
-    (nextData) =>
+    (nextData: Array<AppointmentModel>) =>
       dispatch({
         type: "setData",
         payload: nextData,
@@ -142,8 +249,7 @@ export default () => {
     [dispatch]
   );
   const setResources = React.useCallback(
-    // @ts-ignore
-    (nextData) =>
+    (nextData: Resource[]) =>
       dispatch({
         type: "setResources",
         payload: nextData,
@@ -151,8 +257,7 @@ export default () => {
     [dispatch]
   );
   const setLoading = React.useCallback(
-    // @ts-ignore
-    (nextLoading) =>
+    (nextLoading: boolean) =>
       dispatch({
         type: "setLoading",
         payload: nextLoading,
@@ -163,28 +268,24 @@ export default () => {
   React.useEffect(() => {
     getData(setData, setLoading);
     getResources(setResources, setLoading);
-  }, [setData, currentViewName]);
+  }, [setData]);
 
   return (
     <Paper>
-      {" "}
-      {/*
-     // @ts-ignore */}
-      <Scheduler data={data} locale={locale}>
-        <ViewState currentViewName={currentViewName} onCurrentViewNameChange={setCurrentViewName} />
+      {/* 
+      // @ts-ignore*/}
+      <Scheduler data={data} locale={"de-CH"} >
+        <ViewState defaultCurrentViewName="Woche" />
         <DayView name="Tag" startDayHour={8} endDayHour={16} />
-        <WeekView name="Woche" startDayHour={8} endDayHour={16} excludedDays={[0, 1, 6]}/>
-        <Appointments />
-        <AppointmentTooltip />
-        {/*
-     // @ts-ignore */}
+        <WeekView name="Woche" startDayHour={8} endDayHour={16} excludedDays={[0, 1, 6]} />
+        <MonthView name="Monat" />
+        <Appointments appointmentContentComponent={AppointmentContent} />
+        <AppointmentTooltip contentComponent={AppointmentTooltipContent} />
         <CurrentTimeIndicator indicatorComponent={TimeIndicator} shadePreviousCells shadePreviousAppointments />
-        <Resources data={resources} mainResourceName={mainResourceName} />
-        {/*
-        // @ts-ignore */}
+        <Resources data={resources} mainResourceName={"subject"} />
         <Toolbar {...(loading ? { rootComponent: ToolbarWithLoading } : null)} />
         <DateNavigator />
-        <TodayButton />
+        <TodayButton messages={ { today: "Jetzt" } } />
         <ViewSwitcher />
       </Scheduler>
     </Paper>
