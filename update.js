@@ -2,14 +2,15 @@ const { exit } = require("process");
 
 const args = process.argv.splice(2);
 
-if (args.length != 3) {
-  console.log("Usage: node update.js [startdate] [username] [password]");
+if (args.length < 3) {
+  console.log("Usage: node update.js [startdate] [username] [password] [outdir]");
   exit(0);
 }
 
 const startDate = new Date(args[0].replace(/(\d+[.])(\d+[.])/, '$2$1'));
 const username = args[1];
 const password = args[2];
+const dataDir = (args[3] || "./public") + "/data/";;
 
 const subjectColors = {
   Geografie: "#d2d200",
@@ -179,12 +180,12 @@ const update = async () => {
   ];
   console.log("Got appointments: " + appointments.length);
   fs = require("fs");
-  fs.writeFile("./public/data/appointments.json", JSON.stringify(appointments, null, 4), function (err, data) {
+  fs.writeFile(dataDir + "appointments.json", JSON.stringify(appointments, null, 4), function (err, data) {
     if (err) {
       return console.log(err);
     }
   });
-  fs.writeFile("./public/data/resources.json", JSON.stringify(resources, null, 4), function (err, data) {
+  fs.writeFile(dataDir + "resources.json", JSON.stringify(resources, null, 4), function (err, data) {
     if (err) {
       return console.log(err);
     }
