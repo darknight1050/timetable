@@ -173,7 +173,7 @@ export default () => {
       <Scheduler data={data} locale={locale}>
         <ViewState currentViewName={currentViewName} onCurrentViewNameChange={setCurrentViewName} />
         <DayView name="Tag" startDayHour={8} endDayHour={16} />
-        <WeekView name="Woche" startDayHour={8} endDayHour={16} />
+        <WeekView name="Woche" startDayHour={8} endDayHour={16} excludedDays={[0, 1, 6]}/>
         <Appointments />
         <AppointmentTooltip />
         {/*
