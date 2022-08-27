@@ -3,20 +3,43 @@ import { styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import LinearProgress from "@mui/material/LinearProgress";
 import { ViewState } from "@devexpress/dx-react-scheduler";
-import { Scheduler, WeekView, DayView, Appointments, Toolbar, DateNavigator, ViewSwitcher, Resources, AppointmentTooltip, TodayButton } from "@devexpress/dx-react-scheduler-material-ui";
+import { Scheduler, WeekView, DayView, Appointments, Toolbar, DateNavigator, ViewSwitcher, Resources, AppointmentTooltip, TodayButton, CurrentTimeIndicator } from "@devexpress/dx-react-scheduler-material-ui";
+import classNames from "clsx";
 
 const PREFIX = "Demo";
 
 const classes = {
   toolbarRoot: `${PREFIX}-toolbarRoot`,
   progress: `${PREFIX}-progress`,
+  line: `${PREFIX}-line`,
+  circle: `${PREFIX}-circle`,
+  nowIndicator: `${PREFIX}-nowIndicator`,
 };
-
-const StyledDiv = styled("div")({
+// @ts-ignore
+const StyledDiv = styled("div", { shouldForwardProp: (prop) => prop !== "top" })(({ theme, top }) => ({
   [`&.${classes.toolbarRoot}`]: {
     position: "relative",
   },
-});
+  [`& .${classes.line}`]: {
+    height: "2px",
+    borderTop: `2px ${theme.palette.primary.main} dotted`,
+    width: "100%",
+    transform: "translate(0, -1px)",
+  },
+  [`& .${classes.circle}`]: {
+    width: theme.spacing(1.5),
+    height: theme.spacing(1.5),
+    borderRadius: "50%",
+    transform: "translate(-50%, -50%)",
+    background: theme.palette.primary.main,
+  },
+  [`& .${classes.nowIndicator}`]: {
+    position: "absolute",
+    zIndex: 1,
+    left: 0,
+    top,
+  },
+}));
 
 const StyledLinearProgress = styled(LinearProgress)(() => ({
   [`&.${classes.progress}`]: {
@@ -81,6 +104,22 @@ const getResources = (setResources, setLoading) => {
     });
 };
 
+const TimeIndicator = ({
+  // @ts-ignore
+  top,
+  ...restProps
+}) => (
+  // @ts-ignore
+  <StyledDiv top={top} {...restProps}>
+    {/*
+ // @ts-ignore */}
+    <div className={classNames(classes.nowIndicator, classes.circle)} />
+    {/*
+     // @ts-ignore */}
+    <div className={classNames(classes.nowIndicator, classes.line)} />
+  </StyledDiv>
+);
+
 export default () => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const { data, resources, loading, currentViewName, mainResourceName = "subject", locale = "de-CH" } = state;
@@ -137,6 +176,9 @@ export default () => {
         <WeekView name="Woche" startDayHour={8} endDayHour={16} />
         <Appointments />
         <AppointmentTooltip />
+        {/*
+     // @ts-ignore */}
+        <CurrentTimeIndicator indicatorComponent={TimeIndicator} shadePreviousCells shadePreviousAppointments />
         <Resources data={resources} mainResourceName={mainResourceName} />
         {/*
         // @ts-ignore */}
