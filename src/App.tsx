@@ -118,8 +118,7 @@ const StyledSchoolIcon = styled(SchoolIcon)(({ theme }) => ({
   },
 }));
 
-// @ts-ignore
-const getData = (setData, setLoading) => {
+const getData = (setData: (data: Array<AppointmentModel>) => void, setLoading: (loading: boolean) => void) => {
   setLoading(true);
 
   return fetch("data/appointments.json")
@@ -130,8 +129,7 @@ const getData = (setData, setLoading) => {
     });
 };
 
-// @ts-ignore
-const getResources = (setResources, setLoading) => {
+const getResources = (setResources: (resources: Array<Resource>) => void, setLoading: (loading: boolean) => void) => {
   setLoading(true);
 
   return fetch("data/resources.json")
@@ -142,7 +140,6 @@ const getResources = (setResources, setLoading) => {
     });
 };
 
-// @ts-ignore
 const ToolbarWithLoading = ({ children, ...restProps }: Toolbar.RootProps) => (
   <StyledDiv className={classes.toolbarRoot}>
     <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
@@ -169,7 +166,6 @@ const AppointmentContent = ({ data, ...restProps }: Appointments.AppointmentCont
 );
 
 const AppointmentTooltipContent = (({ appointmentData, ...restProps }: AppointmentTooltip.ContentProps) => (
-    // @ts-ignore
   <StyledAppointmentTooltipContent {...restProps} appointmentData={appointmentData}>
   {console.log(restProps)}
     <Grid container alignItems="center">
@@ -197,28 +193,18 @@ type State = {
   data: Array<AppointmentModel>; 
   resources: Array<Resource>; 
   loading: boolean; 
-} 
+}
+
 type Action =
- | { type: 'setLoading', payload: boolean }
- | { type: 'setData', payload: Array<AppointmentModel> }
- | { type: 'setResources', payload: Array<Resource> };
+  | { type: 'setLoading', payload: boolean }
+  | { type: 'setData', payload: Array<AppointmentModel> }
+  | { type: 'setResources', payload: Array<Resource> };
 
 const initialState: State = {
   data: [],
   resources: [],
   loading: false,
 };
-const appointments: Array<AppointmentModel> = [{
-  startDate: '2018-10-31T10:00',
-  endDate: '2018-10-31T11:15',
-  title: 'Meeting',
-  type: 'private',
-}, {
-  startDate: '2018-10-31T07:30',
-  endDate: '2018-10-31T09:00',
-  title: 'Go to a gym',
-  type: 'work',
-}];
 
 const reducer = (state: State, action: Action): State  => {
   switch (action.type) {
