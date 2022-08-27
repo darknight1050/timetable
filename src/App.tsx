@@ -8,6 +8,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import { ViewState, AppointmentModel, Resource} from "@devexpress/dx-react-scheduler";
 import { Scheduler, DayView, WeekView, MonthView, Appointments, Toolbar, DateNavigator, ViewSwitcher, Resources, AppointmentTooltip, TodayButton, CurrentTimeIndicator } from "@devexpress/dx-react-scheduler-material-ui";
 import classNames from "clsx";
+import dino from './dino.png';
 
 const PREFIX = "timetable";
 
@@ -23,6 +24,7 @@ const classes = {
   container: `${PREFIX}-container`,
   icon: `${PREFIX}-icon`,
   textCenter: `${PREFIX}-textCenter`,
+  dino: `${PREFIX}-dino`,
 };
 
 // @ts-ignore
@@ -49,6 +51,12 @@ const StyledDiv = styled("div", { shouldForwardProp: (prop) => prop !== "top" })
     left: 0,
     top,
   },
+  [`& .${classes.dino}`]: {
+    display: "flex",
+    justifyContent: "center",
+    paddingTop: 24,
+    paddingBottom: 24
+  }
 }));
 
 const StyledLinearProgress = styled(LinearProgress)(() => ({
@@ -255,7 +263,7 @@ export default () => {
     getResources(setResources, setLoading);
   }, [setData]);
 
-  return (
+  return ( 
     <Paper>
       {/* 
       // @ts-ignore*/}
@@ -273,6 +281,11 @@ export default () => {
         <TodayButton messages={ { today: "Jetzt" } } />
         <ViewSwitcher />
       </Scheduler>
+      <StyledDiv>
+        <div className={classes.dino}>
+          <img width="156" height="156" src={dino} />
+        </div>
+      </StyledDiv>
     </Paper>
   );
 };
