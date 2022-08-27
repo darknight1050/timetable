@@ -68,7 +68,7 @@ const StyledAppointmentsAppointmentContent = styled(Appointments.AppointmentCont
     color: "black"
   },
   [`& .${classes.title}`]: {
-    "font-weight": "bold"
+    fontWeight: "bold"
   },
   [`& .${classes.content}`]: {
     opacity: 0.8
@@ -88,7 +88,7 @@ const StyledAppointmentTooltipContent = styled(AppointmentTooltip.Content)(({the
     color: "black"
   },
   [`& .${classes.title}`]: {
-    "font-weight": "bold"
+    fontWeight: "bold"
   },
   [`& .${classes.content}`]: {
     opacity: 0.8
@@ -167,7 +167,6 @@ const AppointmentContent = ({ data, ...restProps }: Appointments.AppointmentCont
 
 const AppointmentTooltipContent = (({ appointmentData, ...restProps }: AppointmentTooltip.ContentProps) => (
   <StyledAppointmentTooltipContent {...restProps} appointmentData={appointmentData}>
-  {console.log(restProps)}
     <Grid container alignItems="center">
       <StyledGrid item xs={2} className={classes.textCenter}>
         <StyledRoom className={classes.icon} />
