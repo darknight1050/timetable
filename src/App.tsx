@@ -1,26 +1,150 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import * as React from "react";
+import { styled } from "@mui/material/styles";
+import Paper from "@mui/material/Paper";
+import LinearProgress from "@mui/material/LinearProgress";
+import { ViewState } from "@devexpress/dx-react-scheduler";
+import { Scheduler, WeekView, DayView, Appointments, Toolbar, DateNavigator, ViewSwitcher, Resources, AppointmentTooltip, TodayButton } from "@devexpress/dx-react-scheduler-material-ui";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+const PREFIX = "Demo";
+
+const classes = {
+  toolbarRoot: `${PREFIX}-toolbarRoot`,
+  progress: `${PREFIX}-progress`,
+};
+
+const StyledDiv = styled("div")({
+  [`&.${classes.toolbarRoot}`]: {
+    position: "relative",
+  },
+});
+
+const StyledLinearProgress = styled(LinearProgress)(() => ({
+  [`&.${classes.progress}`]: {
+    position: "absolute",
+    width: "100%",
+    bottom: 0,
+    left: 0,
+  },
+}));
+
+const ToolbarWithLoading = // @ts-ignore
+  ({ children, ...restProps }) => (
+    <StyledDiv className={classes.toolbarRoot}>
+      <Toolbar.Root {...restProps}>{children}</Toolbar.Root>
+      <StyledLinearProgress className={classes.progress} />
+    </StyledDiv>
   );
-}
 
-export default App;
+const initialState = {
+  data: [],
+  loading: false,
+  currentViewName: "Tag",
+};
+
+// @ts-ignore
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "setLoading":
+      return { ...state, loading: action.payload };
+    case "setData":
+      return { ...state, data: action.payload };
+    case "setResources":
+      return { ...state, resources: action.payload };
+    case "setCurrentViewName":
+      return { ...state, currentViewName: action.payload };
+    default:
+      return state;
+  }
+};
+
+// @ts-ignore
+const getData = (setData, setLoading) => {
+  setLoading(true);
+
+  return fetch("data/appointments.json")
+    .then((response) => response.json())
+    .then((data) => {
+      setData(data);
+      setLoading(false);
+    });
+};
+
+// @ts-ignore
+const getResources = (setResources, setLoading) => {
+  setLoading(true);
+
+  return fetch("data/resources.json")
+    .then((response) => response.json())
+    .then((resources) => {
+      setResources(resources);
+      setLoading(false);
+    });
+};
+
+export default () => {
+  const [state, dispatch] = React.useReducer(reducer, initialState);
+  const { data, resources, loading, currentViewName, mainResourceName = "subject", locale = "de-CH" } = state;
+  const setCurrentViewName = React.useCallback(
+    // @ts-ignore
+    (nextViewName) =>
+      dispatch({
+        type: "setCurrentViewName",
+        payload: nextViewName,
+      }),
+    [dispatch]
+  );
+  const setData = React.useCallback(
+    // @ts-ignore
+    (nextData) =>
+      dispatch({
+        type: "setData",
+        payload: nextData,
+      }),
+    [dispatch]
+  );
+  const setResources = React.useCallback(
+    // @ts-ignore
+    (nextData) =>
+      dispatch({
+        type: "setResources",
+        payload: nextData,
+      }),
+    [dispatch]
+  );
+  const setLoading = React.useCallback(
+    // @ts-ignore
+    (nextLoading) =>
+      dispatch({
+        type: "setLoading",
+        payload: nextLoading,
+      }),
+    [dispatch]
+  );
+
+  React.useEffect(() => {
+    getData(setData, setLoading);
+    getResources(setResources, setLoading);
+  }, [setData, currentViewName]);
+
+  return (
+    <Paper>
+      {" "}
+      {/*
+     // @ts-ignore */}
+      <Scheduler data={data} locale={locale}>
+        <ViewState currentViewName={currentViewName} onCurrentViewNameChange={setCurrentViewName} />
+        <DayView name="Tag" startDayHour={8} endDayHour={16} />
+        <WeekView name="Woche" startDayHour={8} endDayHour={16} />
+        <Appointments />
+        <AppointmentTooltip />
+        <Resources data={resources} mainResourceName={mainResourceName} />
+        {/*
+        // @ts-ignore */}
+        <Toolbar {...(loading ? { rootComponent: ToolbarWithLoading } : null)} />
+        <DateNavigator />
+        <TodayButton />
+        <ViewSwitcher />
+      </Scheduler>
+    </Paper>
+  );
+};
