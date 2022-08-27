@@ -2,13 +2,14 @@ const { exit } = require("process");
 
 const args = process.argv.splice(2);
 
-if (args.length != 2) {
-  console.log("Usage: node update.js [username] [password]");
+if (args.length != 3) {
+  console.log("Usage: node update.js [startdate] [username] [password]");
   exit(0);
 }
 
-const username = args[0];
-const password = args[1];
+const startDate = new Date(args[0].replace(/(\d+[.])(\d+[.])/, '$2$1'));
+const username = args[1];
+const password = args[2];
 
 const subjectColors = {
   Geografie: "#d2d200",
@@ -185,7 +186,7 @@ const update = async () => {
   const dwr = { engine: { remote: { newObject: newObject } } };
   const nice2 = { entity: { PrimaryKey: PrimaryKey } };
 
-  eval("var appointmentsData = " + (await getAppointments(new Date("2022-08-15T00:00:00").getTime(), dwrSession)));
+  eval("var appointmentsData = " + (await getAppointments(startDate.getTime(), dwrSession)));
   let rooms = [];
   let teachers = [];
   let subjects = [];
@@ -219,6 +220,7 @@ const update = async () => {
     { fieldName: "teacher", title: "Lehrer", instances: teachers.map((teacher) => ({ id: teacher, text: teacher })) },
     { fieldName: "subject", title: "Fach", instances: subjects.map((subject) => ({ id: subject, text: subject, color: getColorFromSubject(subject) })) },
   ];
+  console.log("Got appointments: " + appointments.length);
   fs = require("fs");
   fs.writeFile("./public/data/appointments.json", JSON.stringify(appointments, null, 4), function (err, data) {
     if (err) {
