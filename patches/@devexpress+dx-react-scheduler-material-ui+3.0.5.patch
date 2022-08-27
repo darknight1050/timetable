@@ -1,3 +1,39 @@
+diff --git a/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.cjs.js b/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.cjs.js
+index 57e84f2..59ef8f4 100644
+--- a/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.cjs.js
++++ b/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.cjs.js
+@@ -3075,30 +3075,7 @@ var Content = function Content(_ref3) {
+     xs: 10
+   }, /*#__PURE__*/React.createElement("div", {
+     className: classes$s.text
+-  }, "".concat(formatDate(appointmentData.startDate, dxSchedulerCore.HOUR_MINUTE_OPTIONS), "\n              - ").concat(formatDate(appointmentData.endDate, dxSchedulerCore.HOUR_MINUTE_OPTIONS))))), appointmentResources.map(function (resourceItem) {
+-    return /*#__PURE__*/React.createElement(Grid, {
+-      container: true,
+-      alignItems: "center",
+-      className: classes$s.resourceContainer,
+-      key: "".concat(resourceItem.fieldName, "_").concat(resourceItem.id)
+-    }, /*#__PURE__*/React.createElement(Grid, {
+-      item: true,
+-      xs: 2,
+-      className: classes$s.textCenter
+-    }, /*#__PURE__*/React.createElement("div", {
+-      className: classes$s.relativeContainer
+-    }, /*#__PURE__*/React.createElement(Lens, {
+-      className: classNames(classes$s.lens, classes$s.lensMini),
+-      style: {
+-        color: getAppointmentColor(300, resourceItem.color)
+-      }
+-    }))), /*#__PURE__*/React.createElement(Grid, {
+-      item: true,
+-      xs: 10
+-    }, /*#__PURE__*/React.createElement("div", {
+-      className: classes$s.text
+-    }, resourceItem.text)));
+-  }), children);
++  }, "".concat(formatDate(appointmentData.startDate, dxSchedulerCore.HOUR_MINUTE_OPTIONS), "\n              - ").concat(formatDate(appointmentData.endDate, dxSchedulerCore.HOUR_MINUTE_OPTIONS))))), children);
+ };
+ process.env.NODE_ENV !== "production" ? Content.propTypes = {
+   appointmentData: PropTypes.object,
 diff --git a/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.es.js b/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.es.js
 index 0f9506e..9936538 100644
 --- a/node_modules/@devexpress/dx-react-scheduler-material-ui/dist/dx-react-scheduler-material-ui.es.js
