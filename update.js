@@ -182,17 +182,20 @@ const update = async () => {
     { fieldName: "subject", title: "Fach", instances: subjects.map((subject) => ({ id: subject, text: subject, color: getColorFromSubject(subject) })) },
   ];
   console.log("Got appointments: " + appointments.length);
-  fs = require("fs");
-  fs.writeFile(dataDir + "appointments.json", JSON.stringify(appointments, null, 4), function (err, data) {
-    if (err) {
-      return console.log(err);
-    }
-  });
-  fs.writeFile(dataDir + "resources.json", JSON.stringify(resources, null, 4), function (err, data) {
-    if (err) {
-      return console.log(err);
-    }
-  });
+  if(appointments.length > 0) {  
+    console.log("Writing to outdir: " + dataDir);
+    fs = require("fs");
+    fs.writeFile(dataDir + "appointments.json", JSON.stringify(appointments, null, 4), function (err, data) {
+      if (err) {
+        return console.log(err);
+      }
+    });
+    fs.writeFile(dataDir + "resources.json", JSON.stringify(resources, null, 4), function (err, data) {
+      if (err) {
+        return console.log(err);
+      }
+    });
+  }
 };
 
 update();
