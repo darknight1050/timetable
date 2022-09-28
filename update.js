@@ -6,14 +6,15 @@ const { exit } = require("process");
 const args = process.argv.splice(2);
 
 if (args.length < 3) {
-  console.log("Usage: node update.js [startdate] [username] [password] [outdir]");
+  console.log("Usage: node update.js [startdate] [username] [password] [outdir] [combine]");
   exit(0);
 }
 
 const startDate = new Date(args[0].replace(/(\d+[.])(\d+[.])/, '$2$1'));
 const username = args[1];
 const password = args[2];
-const dataDir = (args[3] || "./public") + "/data/";;
+const dataDir = (args[3] || "./public") + "/data/";
+const combine = (args[4] || false);
 
 const subjectColors = {
   Geografie: "#d2d200",
@@ -151,7 +152,7 @@ const update = async () => {
   let rooms = [];
   let teachers = [];
   let subjects = [];
-  const appointments = appointmentsData.map((cell) => {
+  let appointments = appointmentsData.map((cell) => {
     const readCellValues = (cellValues) => cellValues.cellValues[0].value;
     // @ts-ignore
     var cells = cell.cells;
@@ -183,8 +184,20 @@ const update = async () => {
   ];
   console.log("Got appointments: " + appointments.length);
   if(appointments.length > 0) {  
-    console.log("Writing to outdir: " + dataDir);
     fs = require("fs");
+    if(combine) {
+      console.log("Combining...");
+      let origAppointments = JSON.parse(fs.readFileSync(dataDir + "appointments.json"));
+      appointments = appointments.concat(origAppointments.filter((origAppointment) => appointments.findIndex((newAppointment) => {
+        return JSON.stringify(origAppointment) === JSON.stringify(newAppointment);
+      }) < 0));
+      let origResources = JSON.parse(fs.readFileSync(dataDir + "resources.json"));
+      resources = resources.concat(origResources.filter((origResource) => resources.findIndex((newResource) => {
+        return JSON.stringify(origResource) === JSON.stringify(newResource);
+      }) < 0));
+
+    }
+    console.log("Writing to outdir: " + dataDir);
     fs.writeFile(dataDir + "appointments.json", JSON.stringify(appointments, null, 4), function (err, data) {
       if (err) {
         return console.log(err);
