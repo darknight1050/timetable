@@ -18,23 +18,24 @@ const combine = (args[4] || false);
 
 const subjectColors = {
   Geografie: "#d2d200",
+  "Ergänzungsfach Geografie": "#d2d200",
   Biologie: "#17ff17",
   Englisch: "#ffff81",
+  "Englisch bis interne Vorprüfung": "#ffff81",
   Physik: "#ffa64a",
   Mathematik: "#ff3737",
-  "Geschichte und Staatslehre": "#ce765e",
+  "Geschichte": "#ce765e",
   Chemie: "#64f7da",
   Französisch: "#e77401",
-  "Schwerpunktfach Philosophie, Psychologie und Pädagogik": "#42a1ff",
+  "Französisch bis zur iVP": "#e77401",
   "Schwerpunktfach Chemie": "#b1d7fc",
   "Schwerpunktfach Biologie": "#7efc7f",
   Deutsch: "#a6feff",
   "Bildnerisches Gestalten": "#fc51c9",
-  "Wissenschaftliches Arbeiten / Maturaarbeit": "#a10ffc",
-  
 };
 
 const getColorFromSubject = (subject) => {
+  console.log(subject)
   return subjectColors[subject] || "grey";
 };
 
@@ -166,8 +167,8 @@ const update = async () => {
     var teacher = readCellValues(cells["relReservation_lecturer_booking.relLecturer_booking"]).split(" / ")[1] || "";
     if (teachers.indexOf(teacher) === -1) teachers.push(teacher);
 
-    var relEventLabel = readCellValues(cells["relEvent.label"]).split("- ");
-    var subject = (relEventLabel[0] === "Parallelveranstaltung" || relEventLabel[0] === "Parallelveranstaltung ") ? relEventLabel[1] : relEventLabel[3];
+    var relEventLabel = readCellValues(cells["relEvent.label"]).split("-");
+    var subject = ((relEventLabel[0].trim() === "Parallelveranstaltung") ? relEventLabel[2] : relEventLabel[3]).trim();
     if (subjects.indexOf(subject) === -1) subjects.push(subject);
 
     var appointment = {

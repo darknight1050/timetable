@@ -269,8 +269,8 @@ export default () => {
       // @ts-ignore*/}
       <Scheduler data={data} locale={"de-CH"} >
         <ViewState defaultCurrentViewName="Woche" />
-        <DayView name="Tag" startDayHour={8} endDayHour={18} />
-        <WeekView name="Woche" startDayHour={8} endDayHour={18} excludedDays={[0, 1, 6]} />
+        <DayView name="Tag" startDayHour={11} endDayHour={18} />
+        <WeekView name="Woche" startDayHour={11} endDayHour={18} excludedDays={[0, 1, 6]} />
         <MonthView name="Monat" />
         <Appointments appointmentContentComponent={AppointmentContent} />
         <AppointmentTooltip contentComponent={AppointmentTooltipContent} />
