@@ -34,6 +34,7 @@ const subjectColors = {
   "Französisch bis zur iVP": "#e77401",
   "Schwerpunktfach Chemie": "#b1d7fc",
   "Schwerpunktfach Biologie": "#7efc7f",
+  "Schwerpunktfach Philosophie, Psychologie und Pädagogik": "#42a1ff",
   Deutsch: "#a6feff",
   "Bildnerisches Gestalten": "#fc51c9",
 };
